@@ -8,7 +8,10 @@ const hbs = require('express-handlebars');
 const {mongoDbUrl} = require('./config/database');
 const flash = require('connect-flash');
 const session = require('express-session');
+//const methodOverride = require('method-override');
 const {selectOption} = require('./config/customConfig');
+const fileUpload = require('express-fileupload');
+
 const app = express();
 
 
@@ -25,6 +28,7 @@ app.engine('handlebars', hbs({defaultLayout: 'frontend', helpers: {select: selec
 app.set('views', path.join(__dirname, 'resources/views'));
 app.set('view engine' , 'handlebars');
 
+
 /*  Flash and Session*/
 app.use(session({
     secret: 'anysecret',
@@ -32,15 +36,23 @@ app.use(session({
     resave: true
 }));
 
+/* File Upload Middleware*/
+app.use(fileUpload());
 
 //app.use(globalVariables);
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
+
+/* Method Override Middleware*/
+//app.use(methodOverride('newMethod'));
 
 /* Routes */
 const frontendRoutes = require('./routes/frontendRouter');
+const adminRoutes = require('./routes/adminRouter');
 app.use('/', frontendRoutes);
+app.use('/admin', adminRoutes);
 
 
 /* Start The Server */

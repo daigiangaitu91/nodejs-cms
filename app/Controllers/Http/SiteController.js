@@ -7,7 +7,7 @@ module.exports = {
     },
 
     register:  async (req, res) => {
-        if(req.method == 'POST'){        	
+        if(req.method == 'POST'){
 			if(userService.upsert(req, res)){
 				res.redirect('/');
 			}
