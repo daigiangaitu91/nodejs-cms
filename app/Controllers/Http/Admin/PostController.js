@@ -8,45 +8,55 @@ module.exports = {
     /* ADMIN POSTS ENDPOINTS */
 
     index: async (req, res) => {
-        Post.find()
-            .populate('category')
-            .then(posts => {
-                res.render('admin/post/index', {posts: posts});
-            });      
+        postService.lists(req, res).then(function(result){            
+            res.render('admin/post/index', {posts: result});
+        });
     },
 
     create: async (req, res) => {
         if (req.method == 'POST') {            
-            if(postService.upsert(req, '')){
-                res.redirect('/');
+            
+            let result = await postService.upsert(req, '').then(function(result){          
+                return result;
+            });
+
+            if(result){
+                res.redirect('/admin/post');
+                return;
             }
         }
-            Category.find().then(cats => {
-
-                res.render('admin/post/create', {categories: cats});
-            });
+        Category.find().then(cats => {
+            res.render('admin/post/create', {categories: cats});
+        });
         
     },
 
-    edit: (req, res) => {
+    edit: async (req, res) => {
         const id = req.params.id;
 
+        if(req.method == 'POST'){
+            
+            let result = await postService.upsert(req, id).then(function(result){          
+                return result;
+            });
+
+            if(result){
+                res.redirect('/admin/post/edit/'+id);
+                return;
+            }
+        }    
         Post.findById(id)
             .then(post => {
-
                 Category.find().then(cats => {
                     res.render('admin/post/edit', {post: post, categories: cats});
                 });
-
-
             })
     },
 
     delete: (req, res) => {
 
         Post.findByIdAndDelete(req.params.id)
-            .then(deletedPost => {
-                req.flash('success-message', `The post ${deletedPost.title} has been deleted.`);
+            .then(deletedPost => {                
                 res.redirect('/admin/posts');
             });
     },

@@ -7,30 +7,38 @@ module.exports = {
     /* ADMIN POSTS ENDPOINTS */
 
     index: async (req, res) => {
-        Category.find()            
-            .then(categories => {
-                res.render('admin/category/index', {categories: categories});
+        categoryService.lists(req,res).then(function(result){
+                res.render('admin/category/index', {categories: result});
             });      
     },
 
     create: async (req, res) => {
-        if (req.method == 'POST') {            
-            if(categoryService.upsert(req, '')){
-                res.redirect('/');
+        if (req.method == 'POST') { 
+
+            let result = await categoryService.upsert(req, '').then(function(result){          
+                return result;
+            });
+
+            if(result){
+                res.redirect('/admin/category');
+                return;
             }
         }
-            Category.find()            
-            .then(categories => {
-                res.render('admin/category/index', {categories: categories});
-            }); 
+        res.render('admin/category/create', {category: ''});
         
     },
 
-    edit: (req, res) => {
+    edit: async (req, res) => {
         const id = req.params.id;
-        if (req.method == 'POST') {            
-            if(categoryService.upsert(req, id)){
-                res.redirect('/');
+        if (req.method == 'POST') {        
+
+            let result = await categoryService.upsert(req, id).then(function(result){          
+                return result;
+            });
+
+            if(result){
+                res.redirect('/admin/category/edit/'+id);
+                return;
             }
         }
         Category.findById(id)
@@ -42,8 +50,7 @@ module.exports = {
     delete: (req, res) => {
 
         Category.findByIdAndDelete(req.params.id)
-            .then(deletedCategory => {
-                req.flash('success-message', `The post ${deletedCategory.title} has been deleted.`);
+            .then(deletedCategory => {                
                 res.redirect('/admin/category');
             });
     },
