@@ -8,7 +8,7 @@ module.exports = {
         })        
            
     },
-    upsert: (req, id ) => {
+    upsert: (req, id ) => {        
         return new Promise(function(resolve, reject){
             // confirm that user typed same password twice
             if (!isEmpty(id)) {

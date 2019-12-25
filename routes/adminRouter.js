@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const postController = require('../app/Controllers/Http/Admin/PostController');
 const categoryController = require('../app/Controllers/Http/Admin/CategoryController');
+const adminController = require('../app/Controllers/Http/Admin/AdminController');
 
 
 router.all('/*', (req, res, next) => {
@@ -10,6 +11,11 @@ router.all('/*', (req, res, next) => {
 
     next();
 })
+
+
+///// Admin controller ///
+router.route('/')
+    .get(adminController.index);
 
 ///// Post controller ///
 router.route('/post')

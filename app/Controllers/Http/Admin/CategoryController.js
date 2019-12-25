@@ -13,8 +13,7 @@ module.exports = {
     },
 
     create: async (req, res) => {
-        if (req.method == 'POST') { 
-
+        if (req.method == 'POST') {             
             let result = await categoryService.upsert(req, '').then(function(result){          
                 return result;
             });
